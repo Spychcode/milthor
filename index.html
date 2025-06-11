@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Milthor Forensics – OSINT & Pentesting</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Orbitron:700&display=swap">
+    <!-- Import czcionki Poppins -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
     <style>
         :root {
             --main-bg: #101217;
@@ -15,9 +16,27 @@
         body {
             background: var(--main-bg);
             color: var(--text);
-            font-family: 'Orbitron', Arial, sans-serif;
+            font-family: 'Poppins', Arial, sans-serif;
             margin: 0;
             padding: 0;
+            /* Tło z obrazem cyberbezpieczeństwa, np. z Pixabay */
+            background-image: url('https://cdn.pixabay.com/photo/2017/01/31/13/14/online-2025931_1280.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            /* Nakładka dla lepszej czytelności */
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(16,18,23,0.85); /* lekka przezroczystość */
+            z-index: 0;
+        }
+        header, main, footer {
+            position: relative;
+            z-index: 1;
         }
         header {
             background: var(--secondary);
@@ -34,6 +53,7 @@
             font-size: 2.5em;
             margin: 0 0 10px 0;
             letter-spacing: 2px;
+            font-weight: 600;
         }
         nav {
             margin: 20px 0;
@@ -44,6 +64,7 @@
             margin: 0 18px;
             font-size: 1.1em;
             transition: color 0.2s;
+            font-weight: 600;
         }
         nav a:hover {
             color: #fff;
@@ -60,6 +81,7 @@
             color: var(--accent);
             font-size: 2em;
             margin-top: 0;
+            font-weight: 600;
         }
         .features {
             display: flex;
@@ -69,7 +91,7 @@
         }
         .feature {
             flex: 1 1 270px;
-            background: #181a22;
+            background: #181a22cc;
             border: 1px solid var(--accent);
             border-radius: 12px;
             padding: 22px 18px;
@@ -82,6 +104,7 @@
             color: var(--accent);
             font-size: 1.2em;
             margin-bottom: 10px;
+            font-weight: 600;
         }
         footer {
             background: var(--secondary);
