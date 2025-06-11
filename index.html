@@ -11,6 +11,7 @@
             --accent: #1de9fc;
             --text: #ffffff;
             --secondary: #22232a;
+            --glow: 0 0 12px #1de9fc, 0 0 24px #1de9fc77;
         }
         html, body {
             height: 100%;
@@ -21,32 +22,31 @@
             min-height: 100vh;
             font-family: 'Poppins', Arial, sans-serif;
             color: var(--text);
-            margin: 0;
-            padding: 0;
+            background: var(--main-bg);
             overflow-x: hidden;
-            /* Tło: cybermotyw + animacja gradientu */
-            background: linear-gradient(120deg, #101217 60%, #1de9fc22 100%), url('https://cdn.pixabay.com/photo/2017/01/31/13/14/online-2025931_1280.jpg');
-            background-size: cover, cover;
-            background-attachment: fixed;
-            background-position: center;
             position: relative;
-            animation: bgMove 18s linear infinite alternate;
         }
-        @keyframes bgMove {
-            0% { background-position: center 0, center 0; }
-            100% { background-position: center 80px, center 80px; }
-        }
-        body::before {
-            content: "";
+        /* Matrix effect */
+        #matrix-canvas {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(16,18,23,0.88);
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             z-index: 0;
+            opacity: 0.18;
             pointer-events: none;
+        }
+        /* Neon SVG lines */
+        #neon-svg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.22;
         }
         header, main, footer {
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
         header {
             background: var(--secondary);
@@ -55,18 +55,32 @@
             border-bottom: 2px solid var(--accent);
             box-shadow: 0 2px 32px #1de9fc22;
         }
+        .logo-container {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 10px;
+            animation: fadeInDown 1.2s 0.2s forwards;
+            opacity: 0;
+        }
+        .logo-glow {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            filter: blur(8px);
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+            animation: neonGlow 2s infinite alternate;
+        }
+        @keyframes neonGlow {
+            from { filter: blur(8px) brightness(1.1);}
+            to   { filter: blur(12px) brightness(1.6);}
+        }
         .logo {
             width: 120px;
-            margin-bottom: 10px;
-            opacity: 0;
-            transform: translateY(-30px) scale(0.95);
-            animation: logoIn 1.3s cubic-bezier(.68,-0.55,.27,1.55) forwards;
-        }
-        @keyframes logoIn {
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            z-index: 1;
+            position: relative;
+            filter: drop-shadow(0 0 18px #1de9fc88);
         }
         h1 {
             color: var(--accent);
@@ -74,12 +88,21 @@
             margin: 0 0 10px 0;
             letter-spacing: 2px;
             font-weight: 600;
+            animation: glitch 2.5s infinite steps(2, end) alternate, fadeInDown 1.2s 0.6s forwards;
             opacity: 0;
-            animation: fadeInDown 1.2s .7s forwards;
+            text-shadow: var(--glow);
         }
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-20px);}
             to { opacity: 1; transform: translateY(0);}
+        }
+        /* Glitch effect */
+        @keyframes glitch {
+            0%,100% { text-shadow: var(--glow), 2px 0 #1de9fc77, -2px 0 #fff0; }
+            20% { text-shadow: var(--glow), 2px 0 #fff, -2px 0 #1de9fc77;}
+            40% { text-shadow: var(--glow), -2px 0 #1de9fc77, 2px 0 #fff;}
+            60% { text-shadow: var(--glow), 2px 2px #fff, -2px -2px #1de9fc77;}
+            80% { text-shadow: var(--glow), 0 0 #fff, 0 0 #1de9fc77;}
         }
         nav {
             margin: 20px 0;
@@ -94,6 +117,7 @@
             transition: color 0.2s;
             font-weight: 600;
             position: relative;
+            text-shadow: 0 0 8px #1de9fc55;
         }
         nav a::after {
             content: "";
@@ -107,12 +131,13 @@
         }
         nav a:hover {
             color: #fff;
+            text-shadow: 0 0 18px #1de9fc;
         }
         nav a:hover::after {
             width: 100%;
         }
         main {
-            max-width: 900px;
+            max-width: 950px;
             margin: 40px auto 0 auto;
             background: var(--secondary);
             border-radius: 18px;
@@ -150,7 +175,7 @@
             border: 1px solid var(--accent);
             border-radius: 12px;
             padding: 22px 18px;
-            transition: box-shadow 0.2s, border-color 0.2s;
+            transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
             box-shadow: 0 0 0 #1de9fc;
             opacity: 0;
             transform: translateY(30px);
@@ -165,14 +190,25 @@
             to { opacity: 1; transform: translateY(0);}
         }
         .feature:hover {
-            box-shadow: 0 0 18px 4px var(--accent);
+            box-shadow: 0 0 28px 8px #1de9fccc;
             border-color: #fff;
+            transform: scale(1.03);
         }
         .feature-title {
             color: var(--accent);
             font-size: 1.2em;
             margin-bottom: 10px;
             font-weight: 600;
+            text-shadow: 0 0 6px #1de9fc77;
+        }
+        /* Flat design illustration */
+        .flat-illustration {
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto 28px auto;
+            display: block;
+            opacity: 0;
+            animation: fadeInUp 1.2s 2.2s forwards;
         }
         footer {
             background: var(--secondary);
@@ -185,6 +221,27 @@
             opacity: 0;
             animation: fadeInUp 1s 3.2s forwards;
         }
+        /* Button with glow */
+        .glow-btn {
+            display: inline-block;
+            background: var(--accent);
+            color: #101217;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 32px;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 14px 0 0 0;
+            box-shadow: 0 0 18px #1de9fc88;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            text-shadow: 0 0 8px #fff9;
+        }
+        .glow-btn:hover {
+            background: #fff;
+            color: var(--accent);
+            box-shadow: 0 0 36px #1de9fc;
+        }
         @media (max-width: 700px) {
             .features {
                 flex-direction: column;
@@ -196,8 +253,23 @@
     </style>
 </head>
 <body>
+    <!-- Matrix effect canvas -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- Neon SVG lines -->
+    <svg id="neon-svg" width="100vw" height="100vh">
+        <g stroke="#1de9fc" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.8">
+            <circle cx="50%" cy="15%" r="90" stroke-dasharray="20 10" />
+            <circle cx="80%" cy="70%" r="70" stroke-dasharray="12 12" />
+            <path d="M 15% 80% Q 30% 60%, 50% 70% T 85% 85%" stroke-dasharray="16 8"/>
+        </g>
+    </svg>
+
     <header>
-        <img src="logo1.jpg" alt="Milthor Forensics Logo" class="logo">
+        <span class="logo-container">
+            <img src="logo1.jpg" alt="Milthor Forensics Logo" class="logo-glow">
+            <img src="logo1.jpg" alt="Milthor Forensics Logo" class="logo">
+        </span>
         <h1>Milthor Forensics</h1>
         <nav>
             <a href="#o-aplikacji">O aplikacji</a>
@@ -207,10 +279,24 @@
     </header>
     <main>
         <section id="o-aplikacji">
+            <!-- Flat design illustration: OSINT -->
+            <svg class="flat-illustration" viewBox="0 0 320 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="40" y="60" width="240" height="120" rx="16" fill="#181a22" stroke="#1de9fc" stroke-width="3"/>
+                <rect x="65" y="85" width="60" height="20" rx="6" fill="#1de9fc" opacity="0.5"/>
+                <rect x="140" y="85" width="115" height="20" rx="6" fill="#fff" opacity="0.1"/>
+                <rect x="65" y="120" width="190" height="15" rx="5" fill="#fff" opacity="0.09"/>
+                <circle cx="100" cy="160" r="12" fill="#1de9fc" opacity="0.5"/>
+                <rect x="120" y="150" width="100" height="18" rx="7" fill="#fff" opacity="0.08"/>
+                <rect x="230" y="150" width="30" height="18" rx="7" fill="#1de9fc" opacity="0.2"/>
+                <!-- Magnifier glass -->
+                <circle cx="250" cy="100" r="18" fill="#1de9fc" opacity="0.22"/>
+                <rect x="265" y="115" width="22" height="6" rx="3" fill="#1de9fc" opacity="0.25" transform="rotate(30 265 115)"/>
+            </svg>
             <h2>Zaawansowane narzędzia OSINT & Pentesting</h2>
             <p>
                 Milthor Forensics to nowoczesna aplikacja wspierająca organy ścigania oraz specjalistów ds. cyberbezpieczeństwa w walce z cyberprzestępczością. Nasze narzędzia umożliwiają skuteczne prowadzenie analiz śledczych, śledzenie kryptowalut, wykrywanie zagrożeń oraz testowanie zabezpieczeń systemów informatycznych.
             </p>
+            <a href="mailto:kontakt@milthor.pl" class="glow-btn">Skontaktuj się</a>
         </section>
         <section id="funkcje">
             <h2>Najważniejsze funkcje</h2>
@@ -244,5 +330,46 @@
     <footer>
         &copy; 2025 Milthor Forensics. Wszystkie prawa zastrzeżone.
     </footer>
+    <script>
+    // Matrix effect
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+    canvas.width = w;
+    canvas.height = h;
+    let letters = "01";
+    letters = letters.split("");
+    let fontSize = 18;
+    let columns = Math.floor(w / fontSize);
+    let drops = [];
+    for(let x = 0; x < columns; x++)
+        drops[x] = Math.random() * h / fontSize;
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(16,18,23,0.18)";
+        ctx.fillRect(0, 0, w, h);
+        ctx.font = fontSize + "px monospace";
+        ctx.fillStyle = "#1de9fc";
+        for(let i = 0; i < drops.length; i++) {
+            let text = letters[Math.floor(Math.random()*letters.length)];
+            ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+            if(drops[i]*fontSize > h && Math.random() > 0.96)
+                drops[i] = 0;
+            drops[i]++;
+        }
+        requestAnimationFrame(drawMatrix);
+    }
+    drawMatrix();
+    window.addEventListener('resize', () => {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w;
+        canvas.height = h;
+        columns = Math.floor(w / fontSize);
+        drops = [];
+        for(let x = 0; x < columns; x++)
+            drops[x] = Math.random() * h / fontSize;
+    });
+    </script>
 </body>
 </html>
