@@ -1,11 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Moja strona</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milthor Forensics – OSINT & Pentesting</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Orbitron:700&display=swap">
+    <style>
+        :root {
+            --main-bg: #101217;
+            --accent: #1de9fc;
+            --text: #ffffff;
+            --secondary: #22232a;
+        }
+        body {
+            background: var(--main-bg);
+            color: var(--text);
+            font-family: 'Orbitron', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: var(--secondary);
+            padding: 30px 0 20px 0;
+            text-align: center;
+            border-bottom: 2px solid var(--accent);
+        }
+        .logo {
+            width: 120px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            color: var(--accent);
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            letter-spacing: 2px;
+        }
+        nav {
+            margin: 20px 0;
+        }
+        nav a {
+            color: var(--accent);
+            text-decoration: none;
+            margin: 0 18px;
+            font-size: 1.1em;
+            transition: color 0.2s;
+        }
+        nav a:hover {
+            color: #fff;
+        }
+        main {
+            max-width: 900px;
+            margin: 40px auto 0 auto;
+            background: var(--secondary);
+            border-radius: 18px;
+            box-shadow: 0 0 18px #1de9fc33;
+            padding: 36px 28px;
+        }
+        h2 {
+            color: var(--accent);
+            font-size: 2em;
+            margin-top: 0;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            margin: 32px 0;
+        }
+        .feature {
+            flex: 1 1 270px;
+            background: #181a22;
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            padding: 22px 18px;
+            transition: box-shadow 0.2s;
+        }
+        .feature:hover {
+            box-shadow: 0 0 16px var(--accent);
+        }
+        .feature-title {
+            color: var(--accent);
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        footer {
+            background: var(--secondary);
+            text-align: center;
+            color: #aaa;
+            padding: 18px 0;
+            margin-top: 40px;
+            border-top: 2px solid var(--accent);
+            font-size: 0.95em;
+        }
+        @media (max-width: 700px) {
+            .features {
+                flex-direction: column;
+            }
+            main {
+                padding: 18px 6px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Witaj na mojej stronie!</h1>
-  <p>To jest strona hostowana za darmo na GitHub Pages.</p>
+    <header>
+        <img src="logo1.jpg" alt="Milthor Forensics Logo" class="logo">
+        <h1>Milthor Forensics</h1>
+        <nav>
+            <a href="#o-aplikacji">O aplikacji</a>
+            <a href="#funkcje">Funkcje</a>
+            <a href="#kontakt">Kontakt</a>
+        </nav>
+    </header>
+    <main>
+        <section id="o-aplikacji">
+            <h2>Zaawansowane narzędzia OSINT & Pentesting</h2>
+            <p>
+                Milthor Forensics to nowoczesna aplikacja wspierająca organy ścigania oraz specjalistów ds. cyberbezpieczeństwa w walce z cyberprzestępczością. Nasze narzędzia umożliwiają skuteczne prowadzenie analiz śledczych, śledzenie kryptowalut, wykrywanie zagrożeń oraz testowanie zabezpieczeń systemów informatycznych.
+            </p>
+        </section>
+        <section id="funkcje">
+            <h2>Najważniejsze funkcje</h2>
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-title">OSINT</div>
+                    <p>Automatyczne zbieranie i analiza danych z otwartych źródeł – profile, adresy IP, domeny, social media.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Pentesting</div>
+                    <p>Zaawansowane testy penetracyjne, wykrywanie podatności i audyt bezpieczeństwa infrastruktury IT.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Śledzenie kryptowalut</div>
+                    <p>Identyfikacja i monitorowanie transakcji kryptowalutowych powiązanych z działalnością przestępczą.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Raporty i alerty</div>
+                    <p>Generowanie szczegółowych raportów oraz automatyczne powiadomienia o wykrytych zagrożeniach.</p>
+                </div>
+            </div>
+        </section>
+        <section id="kontakt">
+            <h2>Kontakt</h2>
+            <p>
+                Masz pytania lub chcesz przetestować aplikację?<br>
+                Napisz do nas: <a href="mailto:kontakt@milthor.pl" style="color:var(--accent)">kontakt@milthor.pl</a>
+            </p>
+        </section>
+    </main>
+    <footer>
+        &copy; 2025 Milthor Forensics. Wszystkie prawa zastrzeżone.
+    </footer>
 </body>
 </html>
