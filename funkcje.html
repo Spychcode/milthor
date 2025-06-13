@@ -1,1 +1,413 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MILTHOR – OSINT Tool v1.0</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --main-bg: #101217;
+            --accent: #1de9fc;
+            --text: #ffffff;
+            --secondary: #22232a;
+            --glow: 0 0 12px #1de9fc, 0 0 24px #1de9fc77;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            font-family: 'Poppins', Arial, sans-serif;
+            color: var(--text);
+            background: var(--main-bg);
+            overflow-x: hidden;
+            position: relative;
+        }
+        /* Matrix effect */
+        #matrix-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 0;
+            opacity: 0.18;
+            pointer-events: none;
+        }
+        /* Neon SVG lines */
+        #neon-svg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.22;
+        }
+        header, main, footer {
+            position: relative;
+            z-index: 2;
+        }
+        header {
+            background: var(--secondary);
+            padding: 30px 0 20px 0;
+            text-align: center;
+            border-bottom: 2px solid var(--accent);
+            box-shadow: 0 2px 32px #1de9fc22;
+        }
+        .logo-container {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 10px;
+            animation: fadeInDown 1.2s 0.2s forwards;
+            opacity: 0;
+        }
+        .logo-glow {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            filter: blur(8px);
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+            animation: neonGlow 2s infinite alternate;
+        }
+        @keyframes neonGlow {
+            from { filter: blur(8px) brightness(1.1);}
+            to   { filter: blur(12px) brightness(1.6);}
+        }
+        .logo {
+            width: 120px;
+            z-index: 1;
+            position: relative;
+            filter: drop-shadow(0 0 18px #1de9fc88);
+        }
+        h1 {
+            color: var(--accent);
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            letter-spacing: 2px;
+            font-weight: 600;
+            animation: glitch 2.5s infinite steps(2, end) alternate, fadeInDown 1.2s 0.6s forwards;
+            opacity: 0;
+            text-shadow: var(--glow);
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        /* Glitch effect */
+        @keyframes glitch {
+            0%,100% { text-shadow: var(--glow), 2px 0 #1de9fc77, -2px 0 #fff0; }
+            20% { text-shadow: var(--glow), 2px 0 #fff, -2px 0 #1de9fc77;}
+            40% { text-shadow: var(--glow), -2px 0 #1de9fc77, 2px 0 #fff;}
+            60% { text-shadow: var(--glow), 2px 2px #fff, -2px -2px #1de9fc77;}
+            80% { text-shadow: var(--glow), 0 0 #fff, 0 0 #1de9fc77;}
+        }
+        nav {
+            margin: 20px 0;
+            opacity: 0;
+            animation: fadeInDown 1s 1.2s forwards;
+        }
+        nav a {
+            color: var(--accent);
+            text-decoration: none;
+            margin: 0 18px;
+            font-size: 1.1em;
+            transition: color 0.2s;
+            font-weight: 600;
+            position: relative;
+            text-shadow: 0 0 8px #1de9fc55;
+        }
+        nav a::after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width .3s;
+            position: absolute;
+            left: 0; bottom: -4px;
+        }
+        nav a:hover {
+            color: #fff;
+            text-shadow: 0 0 18px #1de9fc;
+        }
+        nav a:hover::after {
+            width: 100%;
+        }
+        main {
+            max-width: 950px;
+            margin: 40px auto 0 auto;
+            background: var(--secondary);
+            border-radius: 18px;
+            box-shadow: 0 0 18px #1de9fc33;
+            padding: 36px 28px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1.2s 1.5s forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        h2 {
+            color: var(--accent);
+            font-size: 2em;
+            margin-top: 0;
+            font-weight: 600;
+            opacity: 0;
+            animation: fadeInLeft 1.1s 2s forwards;
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-40px);}
+            to { opacity: 1; transform: translateX(0);}
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            margin: 32px 0;
+        }
+        .feature {
+            flex: 1 1 270px;
+            background: #181a22cc;
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            padding: 22px 18px;
+            transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+            box-shadow: 0 0 0 #1de9fc;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: featureIn 0.7s forwards;
+        }
+        .feature:nth-child(1) { animation-delay: 2.4s;}
+        .feature:nth-child(2) { animation-delay: 2.6s;}
+        .feature:nth-child(3) { animation-delay: 2.8s;}
+        .feature:nth-child(4) { animation-delay: 3.0s;}
+        @keyframes featureIn {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .feature:hover {
+            box-shadow: 0 0 28px 8px #1de9fccc;
+            border-color: #fff;
+            transform: scale(1.03);
+        }
+        .feature-title {
+            color: var(--accent);
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 0 0 6px #1de9fc77;
+        }
+        /* Flat design illustration */
+        .flat-illustration {
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto 28px auto;
+            display: block;
+            opacity: 0;
+            animation: fadeInUp 1.2s 2.2s forwards;
+        }
+        footer {
+            background: var(--secondary);
+            text-align: center;
+            color: #aaa;
+            padding: 18px 0;
+            margin-top: 40px;
+            border-top: 2px solid var(--accent);
+            font-size: 0.95em;
+            opacity: 0;
+            animation: fadeInUp 1s 3.2s forwards;
+        }
+        /* Button with glow */
+        .glow-btn {
+            display: inline-block;
+            background: var(--accent);
+            color: #101217;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 32px;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 14px 0 0 0;
+            box-shadow: 0 0 18px #1de9fc88;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            text-shadow: 0 0 8px #fff9;
+        }
+        .glow-btn:hover {
+            background: #fff;
+            color: var(--accent);
+            box-shadow: 0 0 36px #1de9fc;
+        }
+        @media (max-width: 700px) {
+            .features {
+                flex-direction: column;
+            }
+            main {
+                padding: 18px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix effect canvas -->
+    <canvas id="matrix-canvas"></canvas>
 
+    <!-- Neon SVG lines -->
+    <svg id="neon-svg" width="100vw" height="100vh">
+        <g stroke="#1de9fc" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.8">
+            <circle cx="50%" cy="15%" r="90" stroke-dasharray="20 10" />
+            <circle cx="80%" cy="70%" r="70" stroke-dasharray="12 12" />
+            <path d="M 15% 80% Q 30% 60%, 50% 70% T 85% 85%" stroke-dasharray="16 8"/>
+        </g>
+    </svg>
+
+    <header>
+        <span class="logo-container">
+            <img src="logo1.jpg" alt="Milthor Forensics Logo" class="logo-glow">
+            <img src="logo1.jpg" alt="Milthor Forensics Logo" class="logo">
+        </span>
+        <h1>MILTHOR – OSINT Tool v1.0</h1>
+        <nav>
+            <a href="#o-aplikacji">O aplikacji</a>
+            <a href="funkcje.html">Funkcje</a>
+            <a href="kontakt.html">Kontakt</a>
+        </nav>
+    </header>
+   <main>
+    <section id="funkcje">
+        <h2>Moduły Milthor OSINT Tool</h2>
+        <div class="features">
+            <div class="feature">
+                <div class="feature-title">Geolokalizacja IP</div>
+                <p>Zaawansowana identyfikacja lokalizacji adresów IP i analiza powiązań sieciowych z wykorzystaniem aktualnych baz danych geolokalizacyjnych. Moduł umożliwia wykrywanie potencjalnych zagrożeń geograficznych, blokowanie ruchu z podejrzanych regionów i automatyczne tworzenie czarnych list IP powiązanych z atakami, spamem lub próbami włamań. Pozwala także na wizualizację połączeń na mapie oraz integrację z systemami SIEM i firewallami, wspierając szybkie reagowanie na incydenty bezpieczeństwa i ograniczanie powierzchni ataku</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Wsparcie AI</div>
+                <p>Zaawansowane wsparcie sztucznej inteligencji obejmuje chat, automatyczną analizę, podsumowania i wykrywanie wzorców w dużych zbiorach danych. Moduł AI automatyzuje zbieranie i przetwarzanie informacji z różnych źródeł, rozpoznaje kluczowe jednostki, analizuje sentyment, wykrywa anomalie i generuje predykcje zagrożeń. Umożliwia także automatyczne raportowanie, adaptacyjne reagowanie na nowe typy ataków oraz wsparcie analityka w podejmowaniu decyzji. Integracja z modelami OpenAI pozwala na skuteczniejsze wykrywanie cyberzagrożeń, phishingu, analizę treści i szybkie reagowanie na incydenty w czasie rzeczywistym</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Śledzenie Kryptowalut</div>
+                <p>Monitoring i analiza transakcji blockchain (BTC, ETH, USDT ERC20 itp.), wykrywanie powiązań, przepływów oraz podejrzanych aktywności.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Wykrywanie Oszustw E-mail</div>
+                <p>Zaawansowana analiza nagłówków e-mail, wykrywanie phishingu, spoofingu i innych oszustw. Moduł sprawdza autentyczność nadawcy, reputację domen, analizuje linki i załączniki pod kątem zagrożeń oraz generuje alerty o podejrzanych wiadomościach.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Analiza Domen</div>
+                <p>Identyfikacja fałszywych domen poprzez analizę DNS, WHOIS, SSL/TLS i reputacji. Wykrywanie prób phishingu, sprawdzanie certyfikatów, historii rejestracji oraz monitorowanie podejrzanych aktywności i blokowanych adresów.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Analiza Metadanych</div>
+                <p>Odczyt i analiza EXIF, XMP, PDF, DOCX – ujawnianie autora, dat, lokalizacji GPS, historii edycji oraz śladów cyfrowych i prób manipulacji plikami.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Mapa OSINT</div>
+                <p>Interaktywna wizualizacja powiązań i relacji między danymi, umożliwiająca szybkie wykrywanie zależności, sieci kontaktów oraz analizę struktur powiązań w śledztwach cyfrowych.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Analiza Malware</div>
+                <p>Zaawansowane badanie hashy plików, analiza zachowania w środowisku sandbox, wykrywanie złośliwego oprogramowania oraz identyfikacja technik ataku i śladów cyfrowych.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Profilowanie Cyfrowe</div>
+                <p>Analiza wzorców aktywności użytkownika, identyfikacja zagrożeń, tworzenie cyfrowych profili oraz wykrywanie nietypowych zachowań i powiązań.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Analiza nagrań Monitoringu</div>
+                <p>Zaawansowane narzędzie AI do analizy nagrań z monitoringu – automatycznie wykrywa i taguje osoby, tablice rejestracyjne, obiekty oraz przestępcze słowa i zachowania. Moduł umożliwia transkrypcję audio na tekst, wyszukiwanie po słowach kluczowych, analizę scen i generowanie raportów z podejrzanych fragmentów. Idealny do szybkiego przeszukiwania materiału, wykrywania incydentów i wsparcia śledztw cyfrowych.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Analiza Komunikacji</div>
+                <p>Zaawansowane parsowanie i analiza plików z komunikatorów takich jak Telegram i WhatsApp. Moduł umożliwia ekstrakcję wiadomości, metadanych, załączników oraz powiązań między uczestnikami rozmów. Wykorzystuje AI do wykrywania wzorców komunikacyjnych, analizy sentymentu, identyfikacji podejrzanych zachowań oraz generowania podsumowań i raportów. Obsługuje analizę tekstu, obrazów, audio i wideo, wspierając śledztwa cyfrowe i operacje bezpieczeństwa</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Analiza Wi-Fi</div>
+                <p>Zaawansowane wykrywanie urządzeń i mapowanie sieci lokalnej z wieloma funkcjami: skanowanie sieci Wi-Fi, wykrywanie urządzeń, skanowanie portów (nmap), test słownikowy Wi-Fi, deautoryzacja urządzeń (Linux), przechwytywanie pakietów (PCAP), sniffowanie beaconów/probe, eksport heatmapy i danych (CSV, PDF), dashboard do monitorowania oraz możliwość zatrzymania skanowania. Moduł wspiera audyty bezpieczeństwa, testy penetracyjne i analizę aktywności w czasie rzeczywistym</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Wykrywanie Deepfake</div>
+                <p>Zaawansowana analiza obrazów, wideo i audio pod kątem manipulacji z użyciem AI. Moduł wykorzystuje detekcję artefaktów spektralnych, analizę ruchu i synchronizacji audio-wideo, liveness detection, porównanie cech biometrycznych oraz analizę metadanych i historii edycji pliku. Pozwala wykrywać fałszywe nagrania, podmiany twarzy, zmanipulowane głosy i nierealistyczne zachowania, wspierając śledztwa, weryfikację dowodów oraz ochronę przed dezinformacją i oszustwami cyfrowymi</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Analiza Social Media</div>
+                <p>Zaawansowane zbieranie i analiza danych z Twittera, Facebooka, LinkedIna i innych platform społecznościowych. Moduł umożliwia wykrywanie botów, analizę aktywności, powiązań, trendów i sentymentu, monitoring hashtagów i słów kluczowych, a także identyfikację influencerów i kluczowych węzłów sieci. Pozwala na śledzenie zmian w czasie rzeczywistym, wizualizację relacji, analizę treści (posty, komentarze, multimedia) oraz wykrywanie anomalii i potencjalnych zagrożeń, wspierając działania śledcze, bezpieczeństwo i analizę biznesową</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Analiza Przeglądarki</div>
+                <p>Analiza historii i cookies z przeglądarek.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Rozpoznawanie Twarzy</div>
+                <p>Lokalna, zaawansowana analiza zdjęć i nagrań wideo z wykorzystaniem technologii AI i OpenCV. Moduł umożliwia automatyczne wykrywanie, identyfikację i etykietowanie osób oraz obiektów na materiałach wizualnych. Obsługuje rozpoznawanie twarzy w różnych warunkach oświetleniowych i kątach, a także śledzenie ruchu osób w czasie rzeczywistym. Dodatkowo oferuje anonimizację, filtrowanie oraz eksport wyników analizy do raportów. Idealny do śledztw, monitoringu bezpieczeństwa i cyfrowej analizy dowodów</p>
+            </div>
+            <div class="feature">
+                <div class="feature-title">Web Crawling</div>
+                <p>Zaawansowany web crawling umożliwia automatyczne monitorowanie forów, darknetu i stron zagrożeń – także tych trudno dostępnych i dynamicznie zmieniających się. Moduł pozwala na wyszukiwanie konkretnych fraz (np. „papierosy bez akcyzy”), podążanie za linkami, analizę powiązań, wykrywanie wycieków danych, kompromitacji i nowych zagrożeń. Dzięki integracji z AI oraz obsłudze głębokiego i ciemnego internetu, narzędzie wspiera szybkie wykrywanie nielegalnych treści, analizę trendów i generowanie alertów o podejrzanych aktywnościach w czasie rzeczywistym</p>
+            </div>
+        </div>
+        <p class="modules-summary">
+            Dzięki tym modułom Milthor umożliwia kompleksową analizę cyfrową i skuteczne wsparcie w walce z cyberprzestępczością, zapewniając nowoczesne narzędzia dla profesjonalistów i służb.
+        </p>
+    </section>
+
+    <section> 
+         <!-- Nowa sekcja Partnerzy -->
+  <div class="partnerzy" style="margin-top: 30px; text-align: center; opacity: 0; animation: fadeInUp 1s 0.5s forwards;">
+    <h3 style="color: var(--accent); margin-bottom: 12px; font-weight: 600;">Partnerzy</h3>
+    <a href="https://auditguards.com" target="_blank" rel="noopener noreferrer">
+      <img src="https://static.wixstatic.com/media/0507f6_2721b535f8e54e40ad761b8eaeef619e~mv2.png/v1/fill/w_106,h_22,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Original%20auf%20Transparenz%20(2).png" alt="AuditGuards" class="partner-logo" style="max-width: 200px; filter: drop-shadow(0 0 12px var(--accent)); transition: transform 0.2s;">
+    </a>
+  </div>
+    </section>
+</main>
+    <footer>
+        &copy; 2025 Spychcode. Wszystkie prawa zastrzeżone.
+    </footer>
+    <script>
+    // Matrix effect
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+    canvas.width = w;
+    canvas.height = h;
+    let letters = "01";
+    letters = letters.split("");
+    let fontSize = 18;
+    let columns = Math.floor(w / fontSize);
+    let drops = [];
+    for(let x = 0; x < columns; x++)
+        drops[x] = Math.random() * h / fontSize;
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(16,18,23,0.18)";
+        ctx.fillRect(0, 0, w, h);
+        ctx.font = fontSize + "px monospace";
+        ctx.fillStyle = "#1de9fc";
+        for(let i = 0; i < drops.length; i++) {
+            let text = letters[Math.floor(Math.random()*letters.length)];
+            ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+            if(drops[i]*fontSize > h && Math.random() > 0.96)
+                drops[i] = 0;
+            drops[i]++;
+        }
+        requestAnimationFrame(drawMatrix);
+    }
+    drawMatrix();
+    window.addEventListener('resize', () => {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w;
+        canvas.height = h;
+        columns = Math.floor(w / fontSize);
+        drops = [];
+        for(let x = 0; x < columns; x++)
+            drops[x] = Math.random() * h / fontSize;
+    });
+    </script>
+</body>
+</html>
